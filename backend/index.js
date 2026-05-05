@@ -105,7 +105,7 @@ app.use(
   cors({
     origin: [
       "https://poultry-feed-management-software-4.onrender.com",
-      "https://feedmanager.netlify.app",
+      "https://anand-feed-mill.netlify.app",
       "https://anand-erp.netlify.app",
       "http://localhost:5173", 
     ],
