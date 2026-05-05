@@ -1,0 +1,448 @@
+addProductToWarehouse
+here is all backend paths const express=require('express');
+const adminRouter=express.Router();
+const {registerAdmin,loginAdmin, addSalesman, getAllSalesman, getSalesman, updateSalesman, deleteSalesman, addSalesManager, getAllSalesManager, getSalesManager, updateSalesManager, deleteSalesManager, addSalesAuthorizer, getAllSalesAuthorizer, getSalesAuthorizer, updateSalesAuthorizer, deleteSalesAuthorizer, addWarehouse, getAllWarehouse, getWarehouse, updateWarehouse, deleteWarehouse, approveWarehouse, addProductToWarehouse, addPlantHead, getAllPlantHeads, getPlantHead, updatePlantHead, deletePlantHead, addAccountant, getAllAccountants, getAccountant, updateAccountant, deleteAccountant, getAllProductsFromWarehouse, addProduct, getAllProducts, updateProductsPrice, deleteProducts }=require('../controllers/Admin');
+
+const {verifyAdmin} = require('../middleware/verifyAdmin');
+const { cancelOrder, getOrderDetails,getAllOrder, getOrdersToApprove } = require('../controllers/Orders');
+
+//ok
+adminRouter.post('/register',registerAdmin);
+adminRouter.post('/login',loginAdmin);
+
+//ok
+adminRouter.post('/add_salesman', verifyAdmin, addSalesman);
+adminRouter.get('/get_allSalesman', verifyAdmin, getAllSalesman);
+adminRouter.get('/get_salesman/:id', verifyAdmin, getSalesman);
+adminRouter.put('/update_salesman/:id', verifyAdmin, updateSalesman);
+adminRouter.delete('/delete_salesman/:id', verifyAdmin, deleteSalesman);
+
+//ok
+adminRouter.post('/add_salesmanager', verifyAdmin, addSalesManager);
+adminRouter.get('/get_allsalesmanager', verifyAdmin, getAllSalesManager);
+adminRouter.get('/get_salesmanager/:id', verifyAdmin, getSalesManager);
+adminRouter.put('/update_salesmanager/:id', verifyAdmin, updateSalesManager);
+adminRouter.delete('/delete_salesmanager/:id', verifyAdmin, deleteSalesManager);
+
+//ok
+adminRouter.post('/add_salesauthorizer', verifyAdmin, addSalesAuthorizer);
+adminRouter.get('/get_allsalesauthorizer', verifyAdmin, getAllSalesAuthorizer);
+adminRouter.get('/get_salesauthorizer/:id', verifyAdmin, getSalesAuthorizer);
+adminRouter.put('/update_salesauthorizer/:id', verifyAdmin, updateSalesAuthorizer);
+adminRouter.delete('/delete_salesauthorizer/:id', verifyAdmin, deleteSalesAuthorizer);
+
+
+//ok
+// PLANT HEAD ROUTES
+adminRouter.post('/add_planthead', verifyAdmin, addPlantHead);
+adminRouter.get('/get_allplantheads', verifyAdmin, getAllPlantHeads);
+adminRouter.get('/get_planthead/:id', verifyAdmin, getPlantHead);
+adminRouter.put('/update_planthead/:id', verifyAdmin, updatePlantHead);
+adminRouter.delete('/delete_planthead/:id', verifyAdmin, deletePlantHead);
+
+
+//ok
+// ACCOUNTANT ROUTES
+adminRouter.post('/add_accountant', verifyAdmin, addAccountant);
+adminRouter.get('/get_allaccountants', verifyAdmin, getAllAccountants);
+adminRouter.get('/get_accountant/:id', verifyAdmin, getAccountant);
+adminRouter.put('/update_accountant/:id', verifyAdmin, updateAccountant);
+adminRouter.delete('/delete_accountant/:id', verifyAdmin, deleteAccountant);
+
+
+
+//ok
+adminRouter.post('/add_warehouse', verifyAdmin, addWarehouse);
+adminRouter.get('/get_allwarehouse', verifyAdmin, getAllWarehouse);
+adminRouter.get('/get_warehouse/:id', verifyAdmin, getWarehouse);
+adminRouter.patch('/update_warehouse/:id', updateWarehouse);
+adminRouter.delete('/delete_warehouse/:id', verifyAdmin, deleteWarehouse);
+
+
+adminRouter.post('/add_product', verifyAdmin, addProduct);
+adminRouter.get('/get_allproducts', verifyAdmin, getAllProducts);
+
+adminRouter.post('/warehouse/:warehouseId/add_product', addProductToWarehouse);
+adminRouter.get('/:warehouseId/products', getAllProducts);
+adminRouter.put('/:warehouseId/products/:productId', updateProductsPrice);
+adminRouter.delete('/:warehouseId/products/:productId', deleteProducts);
+
+
+
+adminRouter.get('/get_orders_to_approve', verifyAdmin, getOrdersToApprove);
+adminRouter.post('/approve_warehouse', verifyAdmin, approveWarehouse);
+
+adminRouter.get('/get_allorder', verifyAdmin, getAllOrder);
+adminRouter.get('/get_order/:id', verifyAdmin, getOrderDetails);
+adminRouter.post('/cancel_order/:id', verifyAdmin, cancelOrder);
+
+
+
+
+
+
+
+
+
+
+module.exports=adminRouter; const express = require("express");
+const plantHeadRouter = express.Router();
+const {
+  loginPlantHead,
+  getAllOrders,
+  getOrderDetails,
+  getAllProductsInWarehouse,
+  updateProductStock,
+  dispatchOrder,
+  getDispatchedOrders,
+  changeActivityStatus,
+} = require("../controllers/Planthead");
+
+const { verifyPlanthead } = require("../middleware/verifyPlanthead");
+const { cancelOrder } = require("../controllers/Orders");
+
+// Login
+plantHeadRouter.post("/login", loginPlantHead);
+
+// //get the orders which is assigned to this warehouse
+plantHeadRouter.get("/orders/getAll", verifyPlanthead, getAllOrders);
+
+//get order details
+plantHeadRouter.get("/orders/:orderId", verifyPlanthead, getOrderDetails);
+
+// Get all products in the warehouse
+plantHeadRouter.get(
+  "/warehouse/products",
+  verifyPlanthead,
+  getAllProductsInWarehouse
+);
+// Update stock for a product
+plantHeadRouter.put(
+  "/warehouse/products/:productId",
+  verifyPlanthead,
+  updateProductStock
+);
+
+// Dispatch order he add all transport info also
+plantHeadRouter.put("/dispatch/:orderId", verifyPlanthead, dispatchOrder);
+
+//get all dispatched orders
+plantHeadRouter.get("/dispatched-orders", verifyPlanthead, getDispatchedOrders);
+
+plantHeadRouter.post("/cancel_order/:orderId", verifyPlanthead, cancelOrder); // Cancel order
+
+plantHeadRouter.put(
+  "/change-activity-status",
+  verifyPlanthead,
+  changeActivityStatus
+); // Change activity status
+
+module.exports = plantHeadRouter;
+const express = require("express");
+const managerRouter = express.Router();
+const {
+  loginSalesManager,
+  getAssignedOrders,
+  forwardOrderToAuthorizer,
+  getOrderDetails,
+  getForwardedOrders,
+  changeActivityStatus,
+} = require("../controllers/Salesmanager");
+
+const { verifySalesmanager } = require("../middleware/verifySalesmanager");
+const { cancelOrder } = require("../controllers/Orders");
+
+// Sales Manager Login
+managerRouter.post("/login", loginSalesManager);
+
+// View all orders assigned to this Sales Manager (not yet forwarded)
+managerRouter.get("/orders/getAll", verifySalesmanager, getAssignedOrders);
+
+managerRouter.get("/orders/:orderId", verifySalesmanager, getOrderDetails);
+
+// Forward order to Authorizer
+managerRouter.put(
+  "/forward/:orderId",
+  verifySalesmanager,
+  forwardOrderToAuthorizer
+);
+
+managerRouter.post("/cancel_order/:orderId", verifySalesmanager, cancelOrder);
+
+// Get all forwarded orders
+managerRouter.get("/orders/forwarded", verifySalesmanager, getForwardedOrders);
+
+managerRouter.put(
+  "/change-activity-status",
+  verifySalesmanager,
+  changeActivityStatus
+);
+
+module.exports = managerRouter;
+const express = require("express");
+const authorizerRouter = express.Router();
+
+const {
+  verifySalesauthorizer,
+} = require("../middleware/verifySalesauthorizer");
+
+const {
+  loginSalesAuthorizer,
+  getForwardedOrders,
+  getOrderDetails,
+  assignWarehouse,
+  getAssignmentHistory,
+  checkWarehouseApproval,
+  changeActivityStatus,
+} = require("../controllers/SalesAuthorizer");
+const { cancelOrder } = require("../controllers/Orders");
+
+authorizerRouter.post("/login", loginSalesAuthorizer);
+
+authorizerRouter.get(
+  "/orders/getAll",
+  verifySalesauthorizer,
+  getForwardedOrders
+); // View all assigned orders
+authorizerRouter.get(
+  "/orders/:orderId",
+  verifySalesauthorizer,
+  getOrderDetails
+); // Single order detail
+authorizerRouter.put(
+  "/assign-warehouse/:orderId",
+  verifySalesauthorizer,
+  assignWarehouse
+); // Assign warehouse
+
+authorizerRouter.post(
+  "/cancel_order/:orderId",
+  verifySalesauthorizer,
+  cancelOrder
+);
+
+authorizerRouter.get(
+  "/get-assignment-history",
+  verifySalesauthorizer,
+  getAssignmentHistory
+); // Get assignment history
+authorizerRouter.get(
+  "/warehouse-status/:orderId",
+  verifySalesauthorizer,
+  checkWarehouseApproval
+); // Check warehouse approval status
+
+authorizerRouter.put(
+  "/change-activity-status",
+  verifySalesauthorizer,
+  changeActivityStatus
+); // Change activity status
+
+module.exports = authorizerRouter;
+const express = require("express");
+const accountantRouter = express.Router();
+const {
+  loginAccountant,
+  getDispatchedOrders,
+  generateInvoice,
+  getInvoiceDetails,
+  changeActivityStatus,
+} = require("../controllers/Accountant");
+const { verifyAccountant } = require("../middleware/verifyAccountant");
+
+// Login
+accountantRouter.post("/login", loginAccountant);
+
+// Protected Routes
+accountantRouter.get(
+  "/dispatched-orders",
+  verifyAccountant,
+  getDispatchedOrders
+);
+accountantRouter.post(
+  "/generate-invoice/:orderId",
+  verifyAccountant,
+  generateInvoice
+);
+accountantRouter.get("/invoice/:orderId", verifyAccountant, getInvoiceDetails);
+
+accountantRouter.put(
+  "/change-activity-status",
+  verifyAccountant,
+  changeActivityStatus
+);
+
+module.exports = accountantRouter;
+const express = require("express");
+const salesmanRouter = express.Router();
+const {
+  loginSalesman,
+  getDueOrders,
+  getAllOrder,
+  updatePayment,
+  getOrderDetails,
+  deleteOrder,
+  changeActivityStatus,
+} = require("../controllers/Salesman");
+
+const { verifySalesmanToken } = require("../middleware/verifySalesman");
+const { createOrder } = require("../controllers/Orders");
+
+// Login
+salesmanRouter.post("/login", loginSalesman);
+
+// Protected routes
+salesmanRouter.post("/create_order", verifySalesmanToken, createOrder);
+salesmanRouter.delete(
+  "/delete_order/:orderId",
+  verifySalesmanToken,
+  deleteOrder
+);
+salesmanRouter.get("/get_allorder", verifySalesmanToken, getAllOrder);
+salesmanRouter.get("/orders/:orderId", verifySalesmanToken, getOrderDetails);
+salesmanRouter.get("/orders/due", verifySalesmanToken, getDueOrders);
+salesmanRouter.post("/orders/pay/:orderId", verifySalesmanToken, updatePayment);
+salesmanRouter.put(
+  "/change-activity-status",
+  verifySalesmanToken,
+  changeActivityStatus
+);
+
+module.exports = salesmanRouter;  now i want to create a file like api path sp i use in frontend like this // BASE URL
+export const BASE_URL = "http://localhost:5000";
+
+export const API_PATHS = {
+  AUTH: {
+    LOGIN: (type) => /api/${type}/login,
+    LOGOUT: (type) => /api/${type}/logout,
+  },
+
+  ADMIN: {
+    REGISTER: "/api/admin/register",
+    LOGIN: "/api/admin/login",
+
+    SALESMAN: {
+      ADD: "/api/admin/add_salesman",
+      GET_ALL: "/api/admin/get_allSalesman",
+      GET: (id) => /api/admin/get_salesman/${id},
+      UPDATE: (id) => /api/admin/update_salesman/${id},
+      DELETE: (id) => /api/admin/delete_salesman/${id},
+    },
+
+    SALESMANAGER: {
+      ADD: "/api/admin/add_salesmanager",
+      GET_ALL: "/api/admin/get_allsalesmanager",
+      GET: (id) => /api/admin/get_salesmanager/${id},
+      UPDATE: (id) => /api/admin/update_salesmanager/${id},
+      DELETE: (id) => /api/admin/delete_salesmanager/${id},
+    },
+
+    SALESAUTHORIZER: {
+      ADD: "/api/admin/add_salesauthorizer",
+      GET_ALL: "/api/admin/get_allsalesauthorizer",
+      GET: (id) => /api/admin/get_salesauthorizer/${id},
+      UPDATE: (id) => /api/admin/update_salesauthorizer/${id},
+      DELETE: (id) => /api/admin/delete_salesauthorizer/${id},
+    },
+
+    PLANTHEAD: {
+      ADD: "/api/admin/add_planthead",
+      GET_ALL: "/api/admin/get_allplantheads",
+      GET: (id) => /api/admin/get_planthead/${id},
+      UPDATE: (id) => /api/admin/update_planthead/${id},
+      DELETE: (id) => /api/admin/delete_planthead/${id},
+    },
+
+    ACCOUNTANT: {
+      ADD: "/api/admin/add_accountant",
+      GET_ALL: "/api/admin/get_allaccountants",
+      GET: (id) => /api/admin/get_accountant/${id},
+      UPDATE: (id) => /api/admin/update_accountant/${id},
+      DELETE: (id) => /api/admin/delete_accountant/${id},
+    },
+
+    WAREHOUSE: {
+      ADD: "/api/admin/add_warehouse",
+      GET_ALL: "/api/admin/get_allwarehouse",
+      GET: (id) => /api/admin/get_warehouse/${id},
+      UPDATE: (id) => /api/admin/update_warehouse/${id},
+      DELETE: (id) => /api/admin/delete_warehouse/${id},
+      APPROVE: "/api/admin/approve_warehouse",
+
+      ADD_PRODUCT: "/api/admin/add_product",
+      GET_ALL_PRODUCTS: "/api/admin/get_allproducts",
+
+      ADD_PRODUCT_TO_WAREHOUSE: (warehouseId) =>
+        /api/admin/warehouse/${warehouseId}/add_product,
+      GET_PRODUCTS: (warehouseId) => /api/admin/${warehouseId}/products,
+      UPDATE_PRODUCT_PRICE: (warehouseId, productId) =>
+        /api/admin/${warehouseId}/products/${productId},
+      DELETE_PRODUCT: (warehouseId, productId) =>
+        /api/admin/${warehouseId}/products/${productId},
+    },
+
+    ORDERS: {
+      GET_TO_APPROVE: "/api/admin/get_orders_to_approve",
+      GET_ALL: "/api/admin/get_allorder",
+      GET: (id) => /api/admin/get_order/${id},
+      CANCEL: (id) => /api/admin/cancel_order/${id},
+    },
+  },
+
+  SALESMAN: {
+    LOGIN: "/api/salesman/login",
+    CREATE_ORDER: "/api/salesman/create_order",
+    DELETE_ORDER: (orderId) => /api/salesman/delete_order/${orderId},
+    GET_ALL_ORDERS: "/api/salesman/get_allorder",
+    GET_ORDER: (orderId) => /api/salesman/orders/${orderId},
+    GET_DUE_ORDERS: "/api/salesman/orders/due",
+    PAY_ORDER: (orderId) => /api/salesman/orders/pay/${orderId},
+    CHANGE_ACTIVITY_STATUS: "/api/salesman/change-activity-status",
+  },
+
+  MANAGER: {
+    LOGIN: "/api/manager/login",
+    GET_ASSIGNED_ORDERS: "/api/manager/orders/getAll",
+    GET_ORDER: (orderId) => /api/manager/orders/${orderId},
+    FORWARD_ORDER: (orderId) => /api/manager/forward/${orderId},
+    GET_FORWARDED_ORDERS: "/api/manager/orders/forwarded",
+    CHANGE_ACTIVITY_STATUS: "/api/manager/change-activity-status",
+  },
+
+  AUTHORIZER: {
+    LOGIN: "/api/authorizer/login",
+    GET_ASSIGNED_ORDERS: "/api/authorizer/orders/getAll",
+    GET_ORDER: (orderId) => /api/authorizer/orders/${orderId},
+    ASSIGN_WAREHOUSE: (orderId) =>
+      /api/authorizer/assign-warehouse/${orderId},
+    GET_ASSIGNMENT_HISTORY: "/api/authorizer/get-assignment-history",
+    CHECK_WAREHOUSE_STATUS: (orderId) =>
+      /api/authorizer/warehouse-status/${orderId},
+    CHANGE_ACTIVITY_STATUS: "/api/authorizer/change-activity-status",
+  },
+
+  PLANT_HEAD: {
+    LOGIN: "/api/planthead/login",
+    GET_ALL_ORDERS: "/api/planthead/orders/getAll",
+    GET_ORDER: (orderId) => /api/planthead/orders/${orderId},
+    GET_PRODUCTS: "/api/planthead/warehouse/products",
+    UPDATE_PRODUCT_STOCK: (productId) =>
+      /api/planthead/warehouse/products/${productId},
+    DISPATCH_ORDER: (orderId) => /api/planthead/dispatch/${orderId},
+    GET_DISPATCHED_ORDERS: "/api/planthead/dispatched-orders",
+    CHANGE_ACTIVITY_STATUS: "/api/planthead/change-activity-status",
+  },
+
+  ACCOUNTANT: {
+    LOGIN: "/api/accountant/login",
+    GET_DISPATCHED_ORDERS: "/api/accountant/dispatched-orders",
+    GENERATE_INVOICE: (orderId) =>
+      /api/accountant/generate-invoice/${orderId},
+    GET_INVOICE: (orderId) => /api/accountant/invoice/${orderId},
+    CHANGE_ACTIVITY_STATUS: "/api/accountant/change-activity-status",
+  },
+
+  ME: {
+    GET: "/api/me",
+  },
+};

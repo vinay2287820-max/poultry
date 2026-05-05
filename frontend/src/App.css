@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Orbitron:wght@400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Agbalumo&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.logo {
+    font-family: "Google Sans Flex", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Hide scrollbar buttons (for Webkit browsers like Chrome, Edge, Safari) */
+.custom-scrollbar::-webkit-scrollbar-button {
+    display: none;
+}
+
+/* Optional: style the thumb and track */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #bbbbbb;
+    border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #a09f9f;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 2px;
+}
